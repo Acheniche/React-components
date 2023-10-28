@@ -1,12 +1,20 @@
 import React from "react";
 import './search.css';
-import { Planets } from "swapi-ts";
+import GetPlanets, { FindPlanet } from "../API/getPlanets";
 
-class SearchBlock extends React.Component{
+interface SearchBlockProps {
+  handleSearch: (data: any) => void;
+}
+
+interface SearchBlockState {
+  value: string;
+}
+
+class SearchBlock extends React.Component<SearchBlockProps,SearchBlockState>{
 
   state: { value: string; };
 
-  constructor(props: string) {
+  constructor(props: SearchBlockProps) {
     super(props)
     this.state = {value: ''};
 
@@ -18,12 +26,13 @@ class SearchBlock extends React.Component{
     this.setState({value: event.target.value});
   }
 
-  handleSubmit(event:  React.FormEvent<HTMLFormElement>) {
-    console.log('Запрос: ' + this.state.value);
+  async handleSubmit(event:  React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-   Planets.getPage(1).then((data) => {
-    console.log(data);
-   });
+    console.log('Запрос: ' + this.state.value);
+    const res = await FindPlanet.FindPlanet([this.state.value]);
+    localStorage.setItem('request', this.state.value);
+    //const res = await GetPlanets.GetPlanets();
+    this.props.handleSearch(res);
   }
 
   render() {

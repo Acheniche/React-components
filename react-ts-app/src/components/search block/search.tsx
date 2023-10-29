@@ -1,9 +1,12 @@
 import React from "react";
 import './search.css';
-import GetPlanets, { FindPlanet } from "../API/getPlanets";
+import { FindPlanet } from "../API/getPlanets";
+import { FindPlanetResponse } from "../../App";
+
 
 interface SearchBlockProps {
-  handleSearch: (data: any) => void;
+  handleSearch: (data: FindPlanetResponse[]) => void;
+  setLoading: (isLoading: boolean) => void;
 }
 
 interface SearchBlockState {
@@ -12,7 +15,8 @@ interface SearchBlockState {
 
 class SearchBlock extends React.Component<SearchBlockProps,SearchBlockState>{
 
-  state: { value: string; };
+  state: { value: string};
+  
 
   constructor(props: SearchBlockProps) {
     super(props)
@@ -28,11 +32,29 @@ class SearchBlock extends React.Component<SearchBlockProps,SearchBlockState>{
 
   async handleSubmit(event:  React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log('Запрос: ' + this.state.value);
+    this.props.setLoading(true);
     const res = await FindPlanet.FindPlanet([this.state.value]);
     localStorage.setItem('request', this.state.value);
-    //const res = await GetPlanets.GetPlanets();
     this.props.handleSearch(res);
+    this.props.setLoading(false);
+  }
+
+  async componentDidMount() {
+    if (localStorage.getItem('request') === null || localStorage.getItem('request') === '') {
+      this.props.setLoading(true);
+    const res = await FindPlanet.FindPlanet([this.state.value]);
+    this.props.handleSearch(res);
+    this.props.setLoading(false);
+    } else {
+      const local = localStorage.getItem('request');
+      if (local) {
+      this.state.value = local;
+      this.props.setLoading(true);
+      const res = await FindPlanet.FindPlanet([local]);
+      this.props.handleSearch(res);
+      this.props.setLoading(false);
+      }
+    }
   }
 
   render() {

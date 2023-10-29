@@ -18,8 +18,8 @@ export type FindPlanetResponse = {
   value: Planet;
 };
 
-class App extends React.Component<{}, AppState> {
-  constructor(props: {}) {
+class App extends React.Component<NonNullable<unknown>, AppState> {
+  constructor(props: NonNullable<unknown>) {
     super(props);
     this.state = { name: [], isLoading: false, isError: false };
   }

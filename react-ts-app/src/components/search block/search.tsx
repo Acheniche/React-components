@@ -48,7 +48,7 @@ class SearchBlock extends React.Component<SearchBlockProps, SearchBlockState> {
     } else {
       const local = localStorage.getItem("request");
       if (local) {
-        this.state.value = local;
+        this.setState({ value: local });
         this.props.setLoading(true);
         const res = await FindPlanet.FindPlanet([local]);
         this.props.handleSearch(res);

@@ -5,7 +5,8 @@ import SearchBlock from './components/search block/search';
 
 interface AppState {
   name: FindPlanetResponse[];
-  isLoading: boolean
+  isLoading: boolean;
+  isError: boolean;
 }
 
 type Planet = {
@@ -22,7 +23,7 @@ class App extends React.Component<{}, AppState> {
 
 constructor(props: {}) {
   super(props);
-  this.state = {name: [], isLoading: false};
+  this.state = {name: [], isLoading: false, isError: false};
 }
   handleSearch = (data: FindPlanetResponse[]) => {
     this.setState({name: data});
@@ -32,9 +33,18 @@ constructor(props: {}) {
     this.setState({isLoading});
   }
 
+handleError = () => {
+  this.setState({isError: true});
+   // throw new Error('Hey bro, nice error!');
+}
+
   render() {
+    if (this.state.isError){
+      throw new Error('Hey bro, nice error!');
+    }
       return (
         <div className='App'>
+          <button onClick={this.handleError}>Click to error</button>
           <SearchBlock handleSearch = {this.handleSearch} setLoading = {this.setLoading}/>
           {this.state.isLoading ? <h1>Loading...</h1> :
           this.state.name.length === 0 ? <h1>No items</h1> :

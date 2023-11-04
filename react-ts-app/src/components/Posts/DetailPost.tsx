@@ -7,6 +7,7 @@ import React, {
 import { useLocation, useSearchParams } from "react-router-dom";
 import { getByName } from "../API/getPlanets";
 import { FindPlanetResponse } from "../../App";
+import './detailedPost.css'
 
 const DetailedPost = () => {
   function useQuery() {
@@ -47,7 +48,7 @@ const DetailedPost = () => {
   return (
     <section className="DetailedPost">
       {showComponent && (
-        <div>
+        <div className="DetailedPostWrapper">
           {post ? (
             <div>
               {isPostsLoading ? (

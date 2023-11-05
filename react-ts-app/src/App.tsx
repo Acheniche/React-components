@@ -13,10 +13,14 @@ export interface AppState {
 export type Planet = {
   name: string;
   terrain: string;
+  results?: Planet;
 };
 
 export type FindPlanetResponse = {
   value: Planet;
+  results?: Planet;
+  name?: string;
+  terrain?: string;
 };
 
 export function App() {

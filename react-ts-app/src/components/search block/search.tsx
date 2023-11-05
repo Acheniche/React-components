@@ -1,20 +1,58 @@
 import React, { useEffect, useState } from "react";
 import "./search.css";
-import { FindPlanet } from "../API/getPlanets";
-import { FindPlanetResponse, Planet } from "../../App";
+import { FindPlanet, getPage } from "../API/getPlanets";
+import { FindPlanetResponse } from "../../App";
 import Post from "../Posts/PostItem";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 export default function SearchBlock() {
   const [search, setSearch] = useState("");
   const [posts, setPosts] = useState<FindPlanetResponse[]>();
   const [isPostsLoading, setIsPostsLoading] = useState(false);
+  const [, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isButtonNextDisabled, setIsButtonNextDisabled] =
+    useState<boolean>(false);
+  const [isButtonPrevDisabled, setIsButtonPrevDisabled] =
+    useState<boolean>(true);
+
+  function useQuery() {
+    const { search } = useLocation();
+
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
+
+  const query = useQuery();
+  const searchQuery = query.get("search");
 
   async function getPosts(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsPostsLoading(true);
+    setSearchParams({
+      search: `${search}`,
+    });
     const res = await FindPlanet([search]);
     localStorage.setItem("request", search);
     setPosts(res);
+    setIsPostsLoading(false);
+  }
+
+  async function handlePageChange(newPage: number) {
+    setIsPostsLoading(true);
+    if (newPage === 6) {
+      setIsButtonNextDisabled(true);
+    } else if (newPage === 1) {
+      setIsButtonPrevDisabled(true);
+    } else {
+      setIsButtonNextDisabled(false);
+      setIsButtonPrevDisabled(false);
+    }
+    setCurrentPage(newPage);
+    const res = await getPage(newPage);
+    setPosts(res);
+    setSearchParams({
+      page: `${newPage}`,
+    });
     setIsPostsLoading(false);
   }
 
@@ -25,7 +63,7 @@ export default function SearchBlock() {
         localStorage.getItem("request") === ""
       ) {
         setIsPostsLoading(true);
-        const res = await FindPlanet([""]);
+        const res = await getPage(1);
         setPosts(res);
         setIsPostsLoading(false);
       } else {
@@ -62,9 +100,11 @@ export default function SearchBlock() {
             posts.length != 0 ? (
               posts.map((name: FindPlanetResponse) => (
                 <Post
-                  name={name.value.name}
-                  description={name.value.terrain}
-                  key={name.value.name}
+                  name={name.value?.name ? name.value?.name : name.name}
+                  description={
+                    name.value?.terrain ? name.value?.terrain : name.terrain
+                  }
+                  key={name.value?.name ? name.value?.name : name.name}
                 />
               ))
             ) : (
@@ -73,6 +113,33 @@ export default function SearchBlock() {
           ) : (
             <h1>No data</h1>
           )}
+          {(() => {
+            if (!searchQuery || searchQuery == null || searchQuery == "null") {
+              console.log(searchQuery);
+              return (
+                <div className="Pagination">
+                  <button
+                    className="prevButton"
+                    onClick={() => {
+                      handlePageChange(currentPage - 1);
+                    }}
+                    disabled={isButtonPrevDisabled}
+                  >
+                    Prev
+                  </button>
+                  <button
+                    className="nextButton"
+                    onClick={() => {
+                      handlePageChange(currentPage + 1);
+                    }}
+                    disabled={isButtonNextDisabled}
+                  >
+                    Next
+                  </button>
+                </div>
+              );
+            }
+          })()}
         </section>
       )}
     </div>

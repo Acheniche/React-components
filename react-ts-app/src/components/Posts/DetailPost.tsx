@@ -1,13 +1,8 @@
-import React, {
-  ReactComponentElement,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
-import { getByName } from "../API/getPlanets";
+import { FindPlanet } from "../API/getPlanets";
 import { FindPlanetResponse } from "../../App";
-import './detailedPost.css'
+import "./detailedPost.css";
 
 const DetailedPost = () => {
   function useQuery() {
@@ -16,11 +11,11 @@ const DetailedPost = () => {
     return React.useMemo(() => new URLSearchParams(search), [search]);
   }
 
-  let query = useQuery();
+  const query = useQuery();
   const name = query.get("post");
 
   const [post, setPost] = useState<FindPlanetResponse[]>();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const [showComponent, setShowComponent] = useState(true);
   const [isPostsLoading, setIsPostsLoading] = useState(false);
 
@@ -36,7 +31,7 @@ const DetailedPost = () => {
     const start = async () => {
       if (name) {
         setIsPostsLoading(true);
-        const res = await getByName([name]);
+        const res = await FindPlanet([name]);
         setPost(res);
         setIsPostsLoading(false);
         setShowComponent(true);

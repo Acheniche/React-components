@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./search.css";
 import { FindPlanet, getPage } from "../API/getPlanets";
 import { FindPlanetResponse } from "../../App";
 import Post from "../Posts/PostItem";
 import { useLocation, useSearchParams } from "react-router-dom";
+import { usePostsContext, useSearchContext } from "../constext/context";
 
 export default function SearchBlock() {
-  const [search, setSearch] = useState("");
-  const [posts, setPosts] = useState<FindPlanetResponse[]>();
+  //const [search, setSearch] = useState("");
+  //const [posts, setPosts] = useState<FindPlanetResponse[]>();
+  //const {posts, setPosts} = useContext(DataContext);
+  //const context = useContext(DataContext);
+  const {posts, setPosts} = usePostsContext();
+  const {search, setSearch} = useSearchContext();  
+
+
   const [isPostsLoading, setIsPostsLoading] = useState(false);
   const [, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -31,8 +38,8 @@ export default function SearchBlock() {
     setSearchParams({
       search: `${search}`,
     });
-    const res = await FindPlanet([search]);
-    localStorage.setItem("request", search);
+    const res = await FindPlanet([search as string]);
+    localStorage.setItem("request", search as string);
     setPosts(res);
     setIsPostsLoading(false);
   }
@@ -127,6 +134,7 @@ export default function SearchBlock() {
                   >
                     Prev
                   </button>
+                  <h1>{currentPage}</h1>
                   <button
                     className="nextButton"
                     onClick={() => {

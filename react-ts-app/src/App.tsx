@@ -3,6 +3,7 @@ import "./App.css";
 import SearchBlock from "./components/search block/search";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import DetailedPost from "./components/Posts/DetailPost";
+import { PostsContext, SearchContext } from "./components/constext/context";
 
 export interface AppState {
   name: FindPlanetResponse[];
@@ -50,10 +51,17 @@ export function App() {
     },
   ]);
 
+  const [posts, setPosts] = useState<FindPlanetResponse[] | undefined>(undefined);
+  const [search, setSearch] = useState<string | undefined>('');
+
   return (
+    <SearchContext.Provider value={{search, setSearch}}>
+    <PostsContext.Provider value={{posts, setPosts}}>
     <div className="App">
       <button onClick={setError}>Click to error</button>
       <RouterProvider router={router} />
     </div>
+    </PostsContext.Provider>
+    </SearchContext.Provider>
   );
 }

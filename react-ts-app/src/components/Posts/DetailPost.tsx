@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { FindPlanet } from "../API/getPlanets";
 import { FindPlanetResponse } from "../../App";

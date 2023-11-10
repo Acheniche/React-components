@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./search.css";
 import { FindPlanet, getPage } from "../API/getPlanets";
 import { FindPlanetResponse } from "../../App";
@@ -7,10 +7,6 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { usePostsContext, useSearchContext } from "../constext/context";
 
 export default function SearchBlock() {
-  //const [search, setSearch] = useState("");
-  //const [posts, setPosts] = useState<FindPlanetResponse[]>();
-  //const {posts, setPosts} = useContext(DataContext);
-  //const context = useContext(DataContext);
   const {posts, setPosts} = usePostsContext();
   const {search, setSearch} = useSearchContext();  
 

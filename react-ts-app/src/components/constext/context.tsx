@@ -18,7 +18,7 @@ export const SearchContext = createContext<SearchContext | undefined>(undefined)
 export function usePostsContext() {
     const context = useContext(PostsContext);
     if (!context) {
-      throw new Error('');
+      throw new Error('Error');
     }
     return context;
   };
@@ -26,7 +26,7 @@ export function usePostsContext() {
   export function useSearchContext() {
     const context = useContext(SearchContext);
     if (!context) {
-      throw new Error('');
+      throw new Error('Error');
     }
     return context;
   };

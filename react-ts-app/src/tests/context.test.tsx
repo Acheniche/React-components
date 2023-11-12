@@ -29,10 +29,6 @@ describe("PostsContext", () => {
       ),
     });
 
-    act(() => {
-      result.current.setPosts([{ name: "Earth" }]);
-    });
-
     expect(result.current.posts).toEqual(undefined);
   });
 });

@@ -51,17 +51,19 @@ export function App() {
     },
   ]);
 
-  const [posts, setPosts] = useState<FindPlanetResponse[] | undefined>(undefined);
-  const [search, setSearch] = useState<string | undefined>('');
+  const [posts, setPosts] = useState<FindPlanetResponse[] | undefined>(
+    undefined,
+  );
+  const [search, setSearch] = useState<string | undefined>("");
 
   return (
-    <SearchContext.Provider value={{search, setSearch}}>
-    <PostsContext.Provider value={{posts, setPosts}}>
-    <div className="App">
-      <button onClick={setError}>Click to error</button>
-      <RouterProvider router={router} />
-    </div>
-    </PostsContext.Provider>
+    <SearchContext.Provider value={{ search, setSearch }}>
+      <PostsContext.Provider value={{ posts, setPosts }}>
+        <div className="App">
+          <button onClick={setError}>Click to error</button>
+          <RouterProvider router={router} />
+        </div>
+      </PostsContext.Provider>
     </SearchContext.Provider>
   );
 }

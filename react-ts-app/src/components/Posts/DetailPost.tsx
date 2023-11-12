@@ -50,7 +50,7 @@ const DetailedPost = () => {
                 <h1>Loading...</h1>
               ) : (
                 <div>
-                  <button onClick={() => delQuery()}>x</button>
+                  <button onClick={() => delQuery()}>Close</button>
                   <h1>{post[0].value.name}</h1>
                   <h1>Terrain: {post[0].value.terrain}</h1>
                 </div>

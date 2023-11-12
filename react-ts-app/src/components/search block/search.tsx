@@ -7,9 +7,8 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { usePostsContext, useSearchContext } from "../constext/context";
 
 export default function SearchBlock() {
-  const {posts, setPosts} = usePostsContext();
-  const {search, setSearch} = useSearchContext();  
-
+  const { posts, setPosts } = usePostsContext();
+  const { search, setSearch } = useSearchContext();
 
   const [isPostsLoading, setIsPostsLoading] = useState(false);
   const [, setSearchParams] = useSearchParams();

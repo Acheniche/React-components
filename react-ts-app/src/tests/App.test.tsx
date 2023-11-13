@@ -16,6 +16,6 @@ describe("App component", () => {
         </React.StrictMode>,
       );
     });
-    expect(screen.getByText("Click to error")).toBeInTheDocument();
+    expect(screen.getByText("Click to error")).toBeDefined();
   });
 });

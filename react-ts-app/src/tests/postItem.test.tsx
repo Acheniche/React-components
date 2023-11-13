@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Post from "../components/Posts/PostItem";
+import React from "react";
 
 describe("Post component", () => {
   it("renders correctly", () => {

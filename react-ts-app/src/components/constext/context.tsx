@@ -20,6 +20,7 @@ export const SearchContext = createContext<SearchContext | undefined>(
 export function usePostsContext() {
   const context = useContext(PostsContext);
   if (!context) {
+    console.log(context);
     throw new Error("Error");
   }
   return context;
@@ -28,6 +29,7 @@ export function usePostsContext() {
 export function useSearchContext() {
   const context = useContext(SearchContext);
   if (!context) {
+    console.log(context);
     throw new Error("Error");
   }
   return context;

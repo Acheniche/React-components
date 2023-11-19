@@ -45,27 +45,10 @@ export function App() {
       ),
     },
   ]);
-
-  // const [posts, setPosts] = useState<FindPlanetResponse[] | undefined>(undefined,);
-  // const [search, setSearch] = useState<string | undefined>("");
-
-  //const dispatch = useAppDispatch();
-  //const {posts, isLoading, error} = useAppSelector(state => state.postsReducer)
-
-  // useEffect(() => {
-  //   dispatch(fetchPlanets(['']));
-  // },[])
   return (
-    //   <SearchContext.Provider value={{ search, setSearch }}>
-    //     <PostsContext.Provider value={{ posts, setPosts }}>
     <div className="App">
       <button onClick={setError}>Click to error</button>
-      {/* {isLoading && <h1>Loading...</h1>}
-          {error && <h1>{error}</h1>}
-          {JSON.stringify(posts,null,2)} */}
       <RouterProvider router={router} />
     </div>
-    //     </PostsContext.Provider>
-    //   </SearchContext.Provider>
   );
 }

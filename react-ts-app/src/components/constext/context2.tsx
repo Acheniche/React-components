@@ -37,7 +37,7 @@
 
 import React, { useState } from "react";
 
-const CounterWithHistory = () => {
+const CounterWithHistory2 = () => {
   const [count, setCount] = useState(0);
   const [history, setHistory] = useState([]);
 
@@ -63,4 +63,4 @@ const CounterWithHistory = () => {
   );
 };
 
-export default CounterWithHistory;
+export default CounterWithHistory2;

@@ -40,7 +40,9 @@ export default function SearchBlock() {
     setSearchParams({
       search: `${search}`,
     });
-    setPosts(Searchpost.results);
+    if (Searchpost) {
+      setPosts(Searchpost.results);
+    }
     localStorage.setItem("request", search as string);
   }
 

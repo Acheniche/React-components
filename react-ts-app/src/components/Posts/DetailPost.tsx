@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
-//import { FindPlanet } from "../API/getPlanets";
 import { FindPlanetResponse } from "../../App";
 import "./detailedPost.css";
-//import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { planetsAPI } from "../API/getPlanets";
-//import { fetchPlanets } from "../store/redusers/actionCreators";
 
 const DetailedPost = () => {
-  //const dispatch = useAppDispatch();
-  //const {posts, isLoading, error} = useAppSelector(state => state.postsReducer);
-
   function useQuery() {
     const { search } = useLocation();
     return React.useMemo(() => new URLSearchParams(search), [search]);

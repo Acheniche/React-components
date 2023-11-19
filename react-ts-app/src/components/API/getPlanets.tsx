@@ -40,3 +40,5 @@ export const planetsAPI = createApi({
     }),
   }),
 });
+
+export { FindPlanetResponse };

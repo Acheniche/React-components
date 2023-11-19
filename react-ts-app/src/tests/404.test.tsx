@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { expect, test } from "vitest";
 import { App } from "../App";
+import React from "react";
 
 export const fullRoutesConfig = [
   {

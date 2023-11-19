@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
 import "./search.css";
-import { FindPlanet, getPage } from "../API/getPlanets";
 import { FindPlanetResponse } from "../../App";
 import Post from "../Posts/PostItem";
 import { useLocation, useSearchParams } from "react-router-dom";
-import { usePostsContext, useSearchContext } from "../constext/context";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { searchSlice } from "../store/redusers/searchSlice";
+import { planetsAPI } from "../API/getPlanets";
+import { pageSlice } from "../store/redusers/pageSlice";
 
 export default function SearchBlock() {
-  const { posts, setPosts } = usePostsContext();
-  const { search, setSearch } = useSearchContext();
+  const dispatch = useAppDispatch();
+  const { search } = useAppSelector((state) => state.searchReducer);
+  const { setSearch } = searchSlice.actions;
 
-  const [isPostsLoading, setIsPostsLoading] = useState(false);
+  const { page } = useAppSelector((state) => state.pageReducer);
+  const { setPage } = pageSlice.actions;
+
+  const [posts, setPosts] = useState<FindPlanetResponse[]>();
+  const { data: Searchpost } = planetsAPI.useFetchSearchPlanetsQuery(search);
+  const { data: Pagepost, isLoading } =
+    planetsAPI.useFetchPagePlanetsQuery(page);
   const [, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isButtonNextDisabled, setIsButtonNextDisabled] =
@@ -20,7 +29,6 @@ export default function SearchBlock() {
 
   function useQuery() {
     const { search } = useLocation();
-
     return React.useMemo(() => new URLSearchParams(search), [search]);
   }
 
@@ -29,18 +37,16 @@ export default function SearchBlock() {
 
   async function getPosts(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsPostsLoading(true);
     setSearchParams({
       search: `${search}`,
     });
-    const res = await FindPlanet([search as string]);
+    if (Searchpost) {
+      setPosts(Searchpost.results);
+    }
     localStorage.setItem("request", search as string);
-    setPosts(res);
-    setIsPostsLoading(false);
   }
 
   async function handlePageChange(newPage: number) {
-    setIsPostsLoading(true);
     if (newPage === 6) {
       setIsButtonNextDisabled(true);
     } else if (newPage === 1) {
@@ -49,13 +55,12 @@ export default function SearchBlock() {
       setIsButtonNextDisabled(false);
       setIsButtonPrevDisabled(false);
     }
+    dispatch(setPage(newPage));
     setCurrentPage(newPage);
-    const res = await getPage(newPage);
-    setPosts(res);
     setSearchParams({
       page: `${newPage}`,
     });
-    setIsPostsLoading(false);
+    setPosts(Pagepost.results);
   }
 
   useEffect(() => {
@@ -64,17 +69,45 @@ export default function SearchBlock() {
         localStorage.getItem("request") === null ||
         localStorage.getItem("request") === ""
       ) {
-        setIsPostsLoading(true);
-        const res = await getPage(1);
-        setPosts(res);
-        setIsPostsLoading(false);
+        if (Pagepost) {
+          setPosts(Pagepost.results);
+        }
       } else {
         const local = localStorage.getItem("request");
         if (local) {
-          setIsPostsLoading(true);
-          const res = await FindPlanet([local]);
-          setPosts(res);
-          setIsPostsLoading(false);
+          setSearchParams({
+            search: `${local}`,
+          });
+          if (Searchpost) {
+            setPosts(Searchpost.results);
+          }
+        }
+      }
+    };
+    start();
+  }, [Searchpost, Pagepost]);
+
+  useEffect(() => {
+    const start = async () => {
+      if (
+        localStorage.getItem("request") === null ||
+        localStorage.getItem("request") === ""
+      ) {
+        if (Pagepost) {
+          setPosts(Pagepost.results);
+        }
+      } else {
+        const local = localStorage.getItem("request");
+        if (local) {
+          setSearchParams({
+            search: `${local}`,
+          });
+          if (local) {
+            dispatch(setSearch(local));
+          }
+          if (Searchpost) {
+            setPosts(Searchpost.results);
+          }
         }
       }
     };
@@ -87,14 +120,15 @@ export default function SearchBlock() {
         <form onSubmit={getPosts}>
           <input
             className="searchInput"
+            placeholder="Search..."
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => dispatch(setSearch(e.target.value))}
           />
           <input className="searchButton" type="submit" value="send" />
         </form>
       </section>
-      {isPostsLoading ? (
+      {isLoading ? (
         <h1>Loading...</h1>
       ) : (
         <section className="Results">
@@ -117,7 +151,6 @@ export default function SearchBlock() {
           )}
           {(() => {
             if (!searchQuery || searchQuery == null || searchQuery == "null") {
-              console.log(searchQuery);
               return (
                 <div className="Pagination">
                   <button

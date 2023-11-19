@@ -1,39 +1,35 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import React from "react";
+import { render, fireEvent } from "@testing-library/react";
+import { vi } from "vitest";
 import Post from "../components/Posts/PostItem";
 
 describe("Post component", () => {
-  it("renders correctly", () => {
-    const post = {
-      name: "Tatooine",
-      description: "desert",
+  it("renders with name and description", () => {
+    const props = {
+      name: "TestName",
+      description: "TestDescription",
     };
 
-    render(
-      <MemoryRouter>
-        <Post {...post} />
-      </MemoryRouter>,
-    );
+    const { getByText } = render(<Post {...props} />);
 
-    expect(screen.getByText(post.name)).toBeDefined();
-    expect(screen.getByText(`Terrain: ${post.description}`)).toBeDefined();
+    expect(getByText(props.name)).toBeDefined();
+    expect(getByText(`Terrain: ${props.description}`)).toBeDefined();
   });
 
-  it("updates search params on click", () => {
-    const post = {
-      name: "Test Post",
-      description: "Test Description",
+  it("sets search params when clicked", () => {
+    const props = {
+      name: "TestName",
+      description: "TestDescription",
     };
 
-    render(
-      <MemoryRouter initialEntries={["/"]} initialIndex={0}>
-        <Routes>
-          <Route path="/"></Route>
-        </Routes>
-        <Post {...post} />
-      </MemoryRouter>,
-    );
+    vi.mock("react-router-dom", async () => {
+      return {
+        useLocation: vi.fn(() => ({ search: "" })),
+        useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+      };
+    });
 
-    fireEvent.click(screen.getByText(post.name));
+    const { getByText } = render(<Post {...props} />);
+    fireEvent.click(getByText(props.name));
   });
 });

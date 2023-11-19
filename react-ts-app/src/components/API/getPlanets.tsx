@@ -9,14 +9,21 @@
 //   const data = await Planets.getPage(page);
 //   return data.results;
 // }
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Planet } from "../../App";
+//import { FindPlanetResponse } from "../../App";
+export type FindPlanetResponse = {
+  value: Planet;
+  results?: Planet;
+  name?: string;
+  terrain?: string;
+};
 
 export type Response = {
   results?: FindPlanetResponse[];
   resources?: FindPlanetResponse[];
 };
 
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { FindPlanetResponse } from "../../App";
 
 export const planetsAPI = createApi({
   reducerPath: "planetsAPI",
@@ -40,5 +47,3 @@ export const planetsAPI = createApi({
     }),
   }),
 });
-
-export { FindPlanetResponse };

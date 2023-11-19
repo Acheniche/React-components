@@ -16,7 +16,7 @@ export type Planet = {
   results?: Planet;
 };
 
-export type FindPlanetResponse = {
+ export type FindPlanetResponse = {
   value: Planet;
   results?: Planet;
   name?: string;

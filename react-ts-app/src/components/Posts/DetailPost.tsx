@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
-import { FindPlanet } from "../API/getPlanets";
+//import { FindPlanet } from "../API/getPlanets";
 import { FindPlanetResponse } from "../../App";
 import "./detailedPost.css";
+//import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { planetsAPI } from "../API/getPlanets";
+//import { fetchPlanets } from "../store/redusers/actionCreators";
 
 const DetailedPost = () => {
+  //const dispatch = useAppDispatch();
+  //const {posts, isLoading, error} = useAppSelector(state => state.postsReducer);
+
   function useQuery() {
     const { search } = useLocation();
-
     return React.useMemo(() => new URLSearchParams(search), [search]);
   }
 
@@ -17,7 +22,8 @@ const DetailedPost = () => {
   const [post, setPost] = useState<FindPlanetResponse[]>();
   const [, setSearchParams] = useSearchParams();
   const [showComponent, setShowComponent] = useState(true);
-  const [isPostsLoading, setIsPostsLoading] = useState(false);
+  const { data: Searchposts, isLoading } =
+    planetsAPI.useFetchSearchPlanetsQuery(name);
 
   function delQuery() {
     setSearchParams((params) => {
@@ -30,29 +36,27 @@ const DetailedPost = () => {
   useEffect(() => {
     const start = async () => {
       if (name) {
-        setIsPostsLoading(true);
-        const res = await FindPlanet([name]);
-        setPost(res);
-        setIsPostsLoading(false);
+        if (Searchposts) {
+          setPost(Searchposts.results);
+        }
         setShowComponent(true);
       }
     };
     start();
-  }, [name]);
-
+  }, [name, Searchposts]);
   return (
     <section className="DetailedPost">
       {showComponent && (
         <div className="DetailedPostWrapper">
-          {post ? (
+          {post && post.length != 0 ? (
             <div>
-              {isPostsLoading ? (
+              {isLoading ? (
                 <h1>Loading...</h1>
               ) : (
                 <div>
                   <button onClick={() => delQuery()}>Close</button>
-                  <h1>{post[0].value.name}</h1>
-                  <h1>Terrain: {post[0].value.terrain}</h1>
+                  <h1>{post[0].name}</h1>
+                  <h1>Terrain: {post[0].terrain}</h1>
                 </div>
               )}
             </div>

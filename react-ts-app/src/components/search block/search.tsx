@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
-import "./search.css";
+import React, { useCallback, useEffect, useState } from "react";
+//import "./search.css";
 import { FindPlanetResponse } from "../../App";
 import Post from "../Posts/PostItem";
-import { useLocation, useSearchParams } from "react-router-dom";
+//import { useLocation, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { searchSlice } from "../store/redusers/searchSlice";
 import { planetsAPI } from "../API/getPlanets";
 import { pageSlice } from "../store/redusers/pageSlice";
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation"
 
 export default function SearchBlock() {
   const dispatch = useAppDispatch();
@@ -18,32 +21,48 @@ export default function SearchBlock() {
 
   const [posts, setPosts] = useState<FindPlanetResponse[]>();
   const { data: Searchpost } = planetsAPI.useFetchSearchPlanetsQuery(search);
-  const { data: Pagepost, isLoading } =
-    planetsAPI.useFetchPagePlanetsQuery(page);
-  const [, setSearchParams] = useSearchParams();
+  const { data: Pagepost, isLoading, isFetching } = planetsAPI.useFetchPagePlanetsQuery(page);
+  //const [, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isButtonNextDisabled, setIsButtonNextDisabled] =
-    useState<boolean>(false);
-  const [isButtonPrevDisabled, setIsButtonPrevDisabled] =
-    useState<boolean>(true);
+  const [isButtonNextDisabled, setIsButtonNextDisabled] = useState<boolean>(false);
+  const [isButtonPrevDisabled, setIsButtonPrevDisabled] = useState<boolean>(true);
 
-  function useQuery() {
-    const { search } = useLocation();
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-  }
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const query = useQuery();
-  const searchQuery = query.get("search");
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams)
+      params.set(name, value)
+ 
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+  // function useQuery() {
+  //   const { search } = useLocation();
+  //   return React.useMemo(() => new URLSearchParams(search), [search]);
+  // }
+
+  //const query = useQuery();
+  const searchQuery = searchParams.get("search");
 
   async function getPosts(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSearchParams({
-      search: `${search}`,
-    });
+    // setSearchParams({
+    //   search: `${search}`,
+    // });
+    router.push(`?` + createQueryString('search', search), null ,{ shallow: true});
     if (Searchpost) {
       setPosts(Searchpost.results);
     }
     localStorage.setItem("request", search as string);
+     if(!searchQuery || searchQuery == null || searchQuery == "null") {
+      router.push(`?` + createQueryString('page', '1'), undefined ,{ shallow: true });
+       handlePageChange(1);
+     }
   }
 
   async function handlePageChange(newPage: number) {
@@ -57,9 +76,10 @@ export default function SearchBlock() {
     }
     dispatch(setPage(newPage));
     setCurrentPage(newPage);
-    setSearchParams({
-      page: `${newPage}`,
-    });
+    // setSearchParams({
+    //   page: `${newPage}`,
+    // });
+    router.push(`?` + createQueryString('page', `${newPage}`), undefined ,{ shallow: true });
     setPosts(Pagepost.results);
   }
 
@@ -75,9 +95,10 @@ export default function SearchBlock() {
       } else {
         const local = localStorage.getItem("request");
         if (local) {
-          setSearchParams({
-            search: `${local}`,
-          });
+          // setSearchParams({
+          //   search: `${local}`,
+          // });
+          router.push(`?` + createQueryString('search', local), null ,{ shallow: true });
           if (Searchpost) {
             setPosts(Searchpost.results);
           }
@@ -99,9 +120,10 @@ export default function SearchBlock() {
       } else {
         const local = localStorage.getItem("request");
         if (local) {
-          setSearchParams({
-            search: `${local}`,
-          });
+          // setSearchParams({
+          //   search: `${local}`,
+          // });
+          router.push(`?` + createQueryString('search', local), null ,{ shallow: true });
           if (local) {
             dispatch(setSearch(local));
           }
@@ -128,7 +150,7 @@ export default function SearchBlock() {
           <input className="searchButton" type="submit" value="send" />
         </form>
       </section>
-      {isLoading ? (
+      {isLoading || isFetching ? (
         <h1>Loading...</h1>
       ) : (
         <section className="Results">
@@ -150,7 +172,7 @@ export default function SearchBlock() {
             <h1>No data</h1>
           )}
           {(() => {
-            if (!searchQuery || searchQuery == null || searchQuery == "null") {
+             if (!searchQuery || searchQuery == null || searchQuery == "null") {
               return (
                 <div className="Pagination">
                   <button

@@ -11,7 +11,7 @@
 // }
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Planet } from "../../App";
-//import { FindPlanetResponse } from "../../App";
+
 export type FindPlanetResponse = {
   value: Planet;
   results?: Planet;

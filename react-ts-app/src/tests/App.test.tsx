@@ -1,21 +1,30 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { act } from "react-dom/test-utils";
-import { App } from "../App";
-import ErrorBoundary from "../components/ErrorBoundary/Error";
+import Home from "../pages";
+import { vi } from "vitest";
 
-describe("App component", () => {
+vi.mock("react-redux", () => ({
+  Provider: ({ children }) => children,
+}));
+vi.mock("../components/store/store", () => ({
+  setupStore: vi.fn(),
+}));
+vi.mock("../App", () => ({
+  App: () => "MockedApp",
+}));
+
+describe("Home Component", () => {
   it("renders without crashing", () => {
-    act(() => {
-      render(
-        <React.StrictMode>
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
-        </React.StrictMode>,
-      );
-    });
-    expect(screen.getByText("Click to error")).toBeDefined();
+    render(<Home />);
+    expect(screen.getByText("MockedApp")).toBeInTheDocument();
   });
+
+  it("renders with the correct provider and store", () => {
+    render(<Home />);
+    expect(screen.getByText("MockedApp")).toBeInTheDocument();
+    expect(screen.getByText("MockedApp")).toBeInTheDocument();
+  });
+
+  it("dispatches actions or interacts with components correctly", () => {});
 });

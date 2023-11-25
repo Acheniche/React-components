@@ -7,6 +7,18 @@ import { Provider } from "react-redux";
 import { setupStore } from "../components/store/store";
 const store = setupStore();
 
+vi.mock("next/router", () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    pathname: "/mocked-path",
+    query: {},
+    asPath: "/mocked-path",
+  })),
+  usePathname: vi.fn(),
+  useSearchParams: vi.fn(),
+}));
+
 vi.mock("../API/getPlanets", () => ({
   planetsAPI: {
     useFetchSearchPlanetsQuery: vi.fn(),

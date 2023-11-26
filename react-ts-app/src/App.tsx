@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import "./App.css";
 import SearchBlock from "./components/search block/search";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import DetailedPost from "./components/Posts/DetailPost";
+import DetailedPost from "./pages/Planets/DetailedPost";
 
 export interface AppState {
   name: FindPlanetResponse[];
@@ -16,7 +14,7 @@ export type Planet = {
   results?: Planet;
 };
 
- export type FindPlanetResponse = {
+export type FindPlanetResponse = {
   value: Planet;
   results?: Planet;
   name?: string;
@@ -35,20 +33,13 @@ export function App() {
     throw new Error("Hey bro, nice error!");
   }
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <div className="SplitPage">
-          <SearchBlock /> <DetailedPost />
-        </div>
-      ),
-    },
-  ]);
   return (
     <div className="App">
       <button onClick={setError}>Click to error</button>
-      <RouterProvider router={router} />
+      <div className="SplitPage">
+        <SearchBlock></SearchBlock>
+        <DetailedPost></DetailedPost>
+      </div>
     </div>
   );
 }

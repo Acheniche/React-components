@@ -1,17 +1,7 @@
-//import { Planets } from "swapi-ts";
-
-// export async function FindPlanet(planet: string[]) {
-//   const data = await Planets.findBySearch(planet);
-//   return data.resources;
-// }
-
-// export async function getPage(page: number) {
-//   const data = await Planets.getPage(page);
-//   return data.results;
-// }
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Planet } from "../../App";
-//import { FindPlanetResponse } from "../../App";
+import { HYDRATE } from "next-redux-wrapper";
+
 export type FindPlanetResponse = {
   value: Planet;
   results?: Planet;
@@ -24,10 +14,14 @@ export type Response = {
   resources?: FindPlanetResponse[];
 };
 
-
 export const planetsAPI = createApi({
   reducerPath: "planetsAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "https://swapi.dev/api/" }),
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
   endpoints: (build) => ({
     fetchSearchPlanets: build.query<Response, string>({
       query: (search: string) => ({
@@ -47,3 +41,11 @@ export const planetsAPI = createApi({
     }),
   }),
 });
+
+export const {
+  useFetchPagePlanetsQuery,
+  useFetchSearchPlanetsQuery,
+  util: { getRunningQueriesThunk },
+} = planetsAPI;
+
+export const { fetchSearchPlanets, fetchPagePlanets } = planetsAPI.endpoints;

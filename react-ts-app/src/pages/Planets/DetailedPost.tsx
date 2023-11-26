@@ -1,30 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
 import { FindPlanetResponse } from "../../App";
-import "./detailedPost.css";
-import { planetsAPI } from "../API/getPlanets";
+import { useFetchSearchPlanetsQuery } from "../../components/API/getPlanets";
+import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 const DetailedPost = () => {
-  function useQuery() {
-    const { search } = useLocation();
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-  }
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const name = searchParams ? searchParams.get("post") : null;
 
-  const query = useQuery();
-  const name = query.get("post");
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams],
+  );
 
   const [post, setPost] = useState<FindPlanetResponse[]>();
-  const [, setSearchParams] = useSearchParams();
   const [showComponent, setShowComponent] = useState(true);
-  const { data: Searchposts, isLoading } =
-    planetsAPI.useFetchSearchPlanetsQuery(name);
+
+  const result = useFetchSearchPlanetsQuery(
+    typeof name === "string" ? name : skipToken,
+    {
+      skip: router.isFallback,
+    },
+  );
+
+  const { isLoading, isFetching, data: Searchposts } = result;
 
   function delQuery() {
-    setSearchParams((params) => {
-      params.delete("post");
-      setShowComponent(false);
-      return params;
-    });
+    router.push(`?` + createQueryString("post", ""), null, { shallow: true });
+    setShowComponent(false);
   }
 
   useEffect(() => {
@@ -38,13 +48,14 @@ const DetailedPost = () => {
     };
     start();
   }, [name, Searchposts]);
+
   return (
     <section className="DetailedPost">
       {showComponent && (
         <div className="DetailedPostWrapper">
           {post && post.length != 0 ? (
             <div>
-              {isLoading ? (
+              {isLoading || isFetching ? (
                 <h1>Loading...</h1>
               ) : (
                 <div>
@@ -60,4 +71,5 @@ const DetailedPost = () => {
     </section>
   );
 };
+
 export default DetailedPost;

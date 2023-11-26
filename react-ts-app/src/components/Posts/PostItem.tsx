@@ -1,30 +1,31 @@
-import React from "react";
-import "./Post.css";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import React, { useCallback } from "react";
 
 export default function Post(props: {
   name: string | undefined;
   description: string | undefined;
 }) {
-  const [, setSearchParams] = useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  function useQuery() {
-    const { search } = useLocation();
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(name, value);
 
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-  }
-
-  const query = useQuery();
-  const searchQuery = query.get("search");
+      return params.toString();
+    },
+    [searchParams],
+  );
 
   return (
     <div
       className="PostItem"
       id={props.name}
       onClick={() =>
-        setSearchParams({
-          post: `${props.name}`,
-          search: `${searchQuery}`,
+        router.push(`?` + createQueryString("post", props.name), null, {
+          shallow: true,
         })
       }
     >

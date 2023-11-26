@@ -1,7 +1,21 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { vi } from "vitest";
 import Post from "../components/Posts/PostItem";
+
+vi.mock("next/router", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: vi.fn(() => "/"),
+  useSearchParams: vi.fn(() => ({
+    get: vi.fn(() => ""),
+    set: vi.fn(),
+  })),
+}));
 
 describe("Post component", () => {
   it("renders with name and description", () => {
@@ -14,22 +28,5 @@ describe("Post component", () => {
 
     expect(getByText(props.name)).toBeDefined();
     expect(getByText(`Terrain: ${props.description}`)).toBeDefined();
-  });
-
-  it("sets search params when clicked", () => {
-    const props = {
-      name: "TestName",
-      description: "TestDescription",
-    };
-
-    vi.mock("react-router-dom", async () => {
-      return {
-        useLocation: vi.fn(() => ({ search: "" })),
-        useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
-      };
-    });
-
-    const { getByText } = render(<Post {...props} />);
-    fireEvent.click(getByText(props.name));
   });
 });

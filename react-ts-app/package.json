@@ -11,7 +11,7 @@
     "format:fix": "prettier --write \"src/**/*.tsx\"",
     "test": "vitest",
     "test-coverage": "vitest --coverage",
-    "start": "next start -p 3000"
+    "start": "next start"
   },
   "husky": {
     "hooks": {
